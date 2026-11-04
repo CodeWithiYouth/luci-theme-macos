@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-darkmode="false">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>主题预览 — 桌面</title>
+<link rel="stylesheet" href="../htdocs/luci-static/macos/cascade.css">
+<style>
+	.preview-switch {
+		position: fixed; bottom: 88px; left: 12px; z-index: 9999;
+		display: flex; gap: 6px;
+	}
+	.preview-switch a {
+		padding: 4px 10px; border-radius: 8px; font-size: 12px;
+		background: rgba(0,0,0,.45); color: #fff; text-decoration: none;
+		backdrop-filter: blur(10px);
+	}
+	.preview-switch { top: auto; right: auto; bottom: 92px; left: 50%; transform: translateX(-50%); }
+</style>
+</head>
+<body class="macos lang_zh_cn is-desktop" data-page="admin-desktop">
+
+<div class="wallpaper" aria-hidden="true"></div>
+<div class="wallpaper-grain" aria-hidden="true"></div>
+
+<div class="preview-switch">
+	<a href="desktop.html">桌面</a>
+	<a href="window.html">窗口</a>
+	<a href="login.html">登录</a>
+	<a href="#" onclick="document.documentElement.setAttribute('data-darkmode', document.documentElement.getAttribute('data-darkmode') === 'true' ? 'false' : 'true'); return false;">明/暗</a>
+</div>
+
+<header class="menubar">
+	<div class="menubar-side menubar-left">
+		<a class="menubar-logo" href="#" title="桌面">
+			<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+				<path d="M3.2 6.6a13 13 0 0 1 17.6 0"/>
+				<path d="M6.4 10.2a8.6 8.6 0 0 1 11.2 0"/>
+				<path d="M9.4 13.8a4.4 4.4 0 0 1 5.2 0"/>
+				<circle cx="12" cy="17.6" r="1.15" fill="currentColor" stroke="none"/>
+			</svg>
+		</a>
+		<ul class="menubar-items">
+			<li class="menubar-menu is-app">
+				<button class="menubar-item" type="button">桌面</button>
+				<ul class="menubar-dropdown">
+					<li><a class="dropdown-item active" href="#">桌面</a></li>
+					<li><a class="dropdown-item" href="#">概览</a></li>
+					<li><a class="dropdown-item" href="#">防火墙</a></li>
+				</ul>
+			</li>
+			<li class="menubar-menu">
+				<button class="menubar-item" type="button">前往</button>
+				<ul class="menubar-dropdown">
+					<li><a class="dropdown-item" href="#">桌面</a></li>
+					<li><a class="dropdown-item" href="#">状态</a></li>
+					<li><a class="dropdown-item" href="#">系统</a></li>
+					<li><a class="dropdown-item" href="#">网络</a></li>
+					<li><a class="dropdown-item" href="#">服务</a></li>
+				</ul>
+			</li>
+			<li class="menubar-menu">
+				<button class="menubar-item" type="button">显示</button>
+				<ul class="menubar-dropdown">
+					<li><button class="dropdown-item" type="button">刷新页面</button></li>
+					<li><button class="dropdown-item" type="button">全屏</button></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+	<div class="menubar-side menubar-right">
+		<div class="indicators"></div>
+		<button class="menubar-item menubar-icon is-up" type="button" title="OpenWrt-5G">
+			<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+				<path d="M2.7 8.4a15 15 0 0 1 18.6 0"/><path d="M6 12a10 10 0 0 1 12 0"/><path d="M9.4 15.6a5.4 5.4 0 0 1 5.2 0"/><circle cx="12" cy="19" r="1.05" fill="currentColor" stroke="none"/>
+			</svg>
+		</button>
+		<button class="menubar-item menubar-clock" type="button">周三 22:41</button>
+		<div class="menubar-menu">
+			<button class="menubar-item menubar-user" type="button">
+				<span class="menubar-avatar">r</span>
+				<span class="menubar-username">root</span>
+			</button>
+			<ul class="menubar-dropdown">
+				<li><a class="dropdown-item" href="#">系统</a></li>
+				<li><a class="dropdown-item" href="#">退出登录</a></li>
+			</ul>
+		</div>
+	</div>
+</header>
+
+<main class="desktop-main">
+	<div class="desktop">
+		<div class="desktop-widgets">
+			<a class="widget widget-clock" href="#">
+				<div class="clock-time">22:41</div>
+				<div class="clock-date">11月4日 星期三</div>
+				<div class="clock-host">
+					<span class="status-dot is-up"></span>
+					<span>OpenWrt · ImmortalWrt 24.10</span>
+				</div>
+			</a>
+
+			<a class="widget widget-system" href="#">
+				<div class="widget-head">
+					<img class="widget-icon" src="../htdocs/luci-static/macos/icons/system.svg" alt="">
+					<span class="widget-title">系统信息</span>
+					<span class="widget-chevron">›</span>
+				</div>
+				<div class="widget-stat-row">
+					<div class="widget-stat">
+						<span class="widget-stat-value">OpenWrt</span>
+						<span class="widget-stat-caption">主机名</span>
+					</div>
+					<div class="widget-stat">
+						<span class="widget-stat-value">256 MB</span>
+						<span class="widget-stat-caption">内存</span>
+					</div>
+				</div>
+				<div class="widget-rows">
+					<div class="widget-row"><span class="widget-label">设备型号</span><span class="widget-value">Xiaomi Router AX3000T</span></div>
+					<div class="widget-row"><span class="widget-label">固件版本</span><span class="widget-value">OpenWrt 24.10.0</span></div>
+					<div class="widget-row"><span class="widget-label">运行时间</span><span class="widget-value">3 天 4 小时</span></div>
+					<div class="widget-row"><span class="widget-label">负载</span><span class="widget-value">0.08  0.11  0.09</span></div>
+				</div>
+				<div class="widget-meter">
+					<div class="widget-meter-head"><span class="widget-label">内存</span><span class="widget-value">46%</span></div>
+					<div class="meter"><i style="width:46%"></i></div>
+				</div>
+				<div class="widget-meter">
+					<div class="widget-meter-head"><span class="widget-label">存储</span><span class="widget-value">12.1 MB / 29.7 MB</span></div>
+					<div class="meter"><i style="width:41%"></i></div>
+				</div>
+			</a>
+
+			<a class="widget widget-network" href="#">
+				<div class="widget-head">
+					<img class="widget-icon" src="../htdocs/luci-static/macos/icons/network.svg" alt="">
+					<span class="widget-title">网络</span>
+					<span class="widget-chevron">›</span>
+				</div>
+				<div class="widget-stat-row">
+					<div class="widget-stat">
+						<span class="widget-stat-value widget-stat-inline"><span class="status-dot is-up"></span><span>DHCP 客户端</span></span>
+						<span class="widget-stat-caption">协议</span>
+					</div>
+				</div>
+				<div class="widget-rows">
+					<div class="widget-row"><span class="widget-label">地址</span><span class="widget-value">100.64.12.7</span></div>
+					<div class="widget-row"><span class="widget-label">网关</span><span class="widget-value">100.64.0.1</span></div>
+					<div class="widget-row"><span class="widget-label">DNS</span><span class="widget-value">223.5.5.5, 119.29.29.29</span></div>
+					<div class="widget-row"><span class="widget-label">已连接</span><span class="widget-value">1 天 2 小时</span></div>
+					<div class="widget-row"><span class="widget-label">连接数</span><span class="widget-value">184 / 16384</span></div>
+				</div>
+			</a>
+
+			<a class="widget widget-wireless" href="#">
+				<div class="widget-head">
+					<img class="widget-icon" src="../htdocs/luci-static/macos/icons/wifi.svg" alt="">
+					<span class="widget-title">无线</span>
+					<span class="widget-chevron">›</span>
+				</div>
+				<div class="widget-stat-row">
+					<div class="widget-stat">
+						<span class="widget-stat-value">7</span>
+						<span class="widget-stat-caption">已连接客户端</span>
+					</div>
+				</div>
+				<div class="widget-list">
+					<div class="list-item">
+						<img class="list-icon" src="../htdocs/luci-static/macos/icons/wifi.svg" alt="">
+						<div class="list-text"><strong>OpenWrt-5G</strong><small>Master · ch 36</small></div>
+						<span class="badge">5</span>
+					</div>
+					<div class="list-item">
+						<img class="list-icon" src="../htdocs/luci-static/macos/icons/wifi.svg" alt="">
+						<div class="list-text"><strong>OpenWrt</strong><small>Master · ch 6</small></div>
+						<span class="badge">2</span>
+					</div>
+				</div>
+			</a>
+
+			<a class="widget widget-clients" href="#">
+				<div class="widget-head">
+					<img class="widget-icon" src="../htdocs/luci-static/macos/icons/users.svg" alt="">
+					<span class="widget-title">客户端</span>
+					<span class="widget-chevron">›</span>
+				</div>
+				<div class="widget-stat-row">
+					<div class="widget-stat">
+						<span class="widget-stat-value">9</span>
+						<span class="widget-stat-caption">DHCP 租约</span>
+					</div>
+				</div>
+				<div class="widget-list">
+					<div class="list-item"><span class="status-dot is-up"></span><div class="list-text"><strong>MacBook-Pro</strong><small>192.168.1.102</small></div></div>
+					<div class="list-item"><span class="status-dot is-up"></span><div class="list-text"><strong>iPhone-15</strong><small>192.168.1.105</small></div></div>
+					<div class="list-item"><span class="status-dot is-up"></span><div class="list-text"><strong>客厅电视</strong><small>192.168.1.110</small></div></div>
+				</div>
+			</a>
+		</div>
+
+		<div class="desktop-icons">
+			<a class="desk-icon" href="#" title="状态"><img class="desk-icon-img" src="../htdocs/luci-static/macos/icons/status.svg" alt=""><span class="desk-icon-label">状态</span></a>
+			<a class="desk-icon" href="#" title="系统"><img class="desk-icon-img" src="../htdocs/luci-static/macos/icons/system.svg" alt=""><span class="desk-icon-label">系统</span></a>
+			<a class="desk-icon" href="#" title="网络"><img class="desk-icon-img" src="../htdocs/luci-static/macos/icons/network.svg" alt=""><span class="desk-icon-label">网络</span></a>
+			<a class="desk-icon" href="#" title="服务"><img class="desk-icon-img" src="../htdocs/luci-static/macos/icons/services.svg" alt=""><span class="desk-icon-label">服务</span></a>
+			<a class="desk-icon" href="#" title="VPN"><img class="desk-icon-img" src="../htdocs/luci-static/macos/icons/vpn.svg" alt=""><span class="desk-icon-label">VPN</span></a>
+			<a class="desk-icon" href="#" title="防火墙"><img class="desk-icon-img" src="../htdocs/luci-static/macos/icons/firewall.svg" alt=""><span class="desk-icon-label">防火墙</span></a>
+			<a class="desk-icon" href="#" title="软件包"><img class="desk-icon-img" src="../htdocs/luci-static/macos/icons/software.svg" alt=""><span class="desk-icon-label">软件包</span></a>
+			<a class="desk-icon" href="#" title="终端"><img class="desk-icon-img" src="../htdocs/luci-static/macos/icons/terminal.svg" alt=""><span class="desk-icon-label">终端</span></a>
+		</div>
+	</div>
+</main>
+
+<nav class="dock">
+	<div class="dock-inner">
+		<a class="dock-item is-active" href="#" data-label="桌面"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/desktop.svg" alt=""><span class="dock-dot"></span></a>
+		<a class="dock-item" href="#" data-label="状态"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/status.svg" alt=""><span class="dock-dot"></span></a>
+		<a class="dock-item" href="#" data-label="系统"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/system.svg" alt=""><span class="dock-dot"></span></a>
+		<a class="dock-item" href="#" data-label="网络"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/network.svg" alt=""><span class="dock-dot"></span></a>
+		<a class="dock-item" href="#" data-label="服务"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/services.svg" alt=""><span class="dock-dot"></span></a>
+		<a class="dock-item" href="#" data-label="VPN"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/vpn.svg" alt=""><span class="dock-dot"></span></a>
+		<a class="dock-item" href="#" data-label="防火墙"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/firewall.svg" alt=""><span class="dock-dot"></span></a>
+		<div class="dock-separator"></div>
+		<a class="dock-item dock-action" href="#" data-label="重启"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/reboot.svg" alt=""><span class="dock-dot"></span></a>
+		<a class="dock-item dock-action" href="#" data-label="退出登录"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/logout.svg" alt=""><span class="dock-dot"></span></a>
+	</div>
+</nav>
+
+</body>
+</html>

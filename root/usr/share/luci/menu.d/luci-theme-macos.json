@@ -1,0 +1,20 @@
+{
+	"admin/desktop": {
+		"title": "Desktop",
+		"order": 1,
+		"action": {
+			"type": "view",
+			"path": "macos/desktop"
+		},
+		"depends": {
+			"acl": [ "luci-base" ],
+			"uci": {
+				"luci": {
+					"main": {
+						"mediaurlbase": "/luci-static/macos"
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-darkmode="false" data-embed="1">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mock | 页面</title>
+<link rel="stylesheet" href="../htdocs/luci-static/macos/cascade.css">
+</head>
+<body class="macos lang_zh_cn is-window">
+
+<div class="wallpaper" aria-hidden="true"></div>
+<div class="wallpaper-grain" aria-hidden="true"></div>
+
+<div class="alerts"><div class="alert-message warning"><div class="alert-body"><strong>这个提示在嵌入模式下应被隐藏</strong></div></div></div>
+
+<main class="workspace">
+	<div class="mac-window">
+		<aside class="sidebar">
+			<div class="sidebar-scroll"><div class="sidebar-head"><span class="sidebar-title">侧栏在嵌入模式下隐藏</span></div></div>
+		</aside>
+
+		<section class="window-main">
+			<div class="titlebar"><div class="titlebar-title">标题栏在嵌入模式下隐藏</div></div>
+
+			<div class="window-toolbar has-tabs">
+				<div id="tabmenu">
+					<ul class="tabs">
+						<li class="tab active"><a href="#">常规</a></li>
+						<li class="tab"><a href="#">高级</a></li>
+						<li class="tab"><a href="#">日志</a></li>
+					</ul>
+				</div>
+				<div class="toolbar-indicators">
+					<div id="indicators" class="indicators">
+						<span data-indicator="uci-changes" data-style="active" data-clickable="1">未保存的更改: 2</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="window-content">
+				<div class="content-inner">
+					<div class="cbi-map">
+						<div class="cbi-section">
+							<h3 id="frame-title">页面</h3>
+							<div class="cbi-section-descr">这是嵌入在应用窗口里的模拟 LuCI 页面，用于检查工具栏、滚动和底部操作栏。</div>
+							<div class="cbi-value">
+								<label class="cbi-value-title">名称</label>
+								<div class="cbi-value-field"><input class="cbi-input-text" type="text" value="OpenWrt"></div>
+							</div>
+							<div class="cbi-value">
+								<label class="cbi-value-title">启用</label>
+								<div class="cbi-value-field"><input type="checkbox" checked></div>
+							</div>
+							<div class="cbi-value">
+								<label class="cbi-value-title">模式</label>
+								<div class="cbi-value-field">
+									<select class="cbi-input-select"><option>自动</option><option>手动</option></select>
+								</div>
+							</div>
+						</div>
+
+						<div class="cbi-section">
+							<h3>列表</h3>
+							<div class="cbi-section-table">
+								<div class="table">
+									<div class="tr table-titles"><div class="th">接口</div><div class="th">地址</div><div class="th cbi-section-actions">操作</div></div>
+									<div class="tr"><div class="td">lan</div><div class="td">192.168.1.1</div><div class="td cbi-section-actions"><button class="cbi-button" type="button">编辑</button></div></div>
+									<div class="tr"><div class="td">wan</div><div class="td">100.64.12.7</div><div class="td cbi-section-actions"><button class="cbi-button" type="button">编辑</button></div></div>
+								</div>
+							</div>
+						</div>
+
+						<div class="cbi-page-actions">
+							<button class="cbi-button cbi-button-reset" type="button">重置</button>
+							<button class="cbi-button cbi-button-apply important" type="button">保存并应用</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+</main>
+
+<script>
+	(function() {
+		var params = new URLSearchParams(location.search),
+		    app = params.get('app') || '',
+		    sub = params.get('sub') || '',
+		    names = {
+		    	status: '状态', system: '系统', network: '网络',
+		    	services: '服务', vpn: 'VPN', firewall: '防火墙'
+		    },
+		    title = (names[app] || app || '页面') + (sub ? ' / ' + sub : '');
+
+		document.title = 'OpenWrt | ' + title;
+
+		var el = document.getElementById('frame-title');
+		if (el) el.textContent = title;
+	})();
+</script>
+</body>
+</html>

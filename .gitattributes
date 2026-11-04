@@ -1,0 +1,7 @@
+# keep the repository (and the packaged files) byte-identical on every platform
+* text=auto eol=lf
+
+*.jpg binary
+*.png binary
+*.gz binary
+*.zst binary

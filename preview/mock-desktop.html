@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-darkmode="false">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>主题预览 — 桌面（模拟运行）</title>
+<link rel="stylesheet" href="../htdocs/luci-static/macos/cascade.css">
+<style>
+	.preview-switch { position: fixed; bottom: 88px; left: 12px; z-index: 9999; display: flex; gap: 6px; }
+	.preview-switch a { padding: 4px 10px; border-radius: 8px; font-size: 12px; background: rgba(0,0,0,.45); color: #fff; text-decoration: none; backdrop-filter: blur(10px); }
+	.preview-error { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 10000; max-width: 80vw; padding: 10px 14px; border-radius: 10px; background: #b00020; color: #fff; font: 12px/1.5 ui-monospace, monospace; white-space: pre-wrap; }
+	.preview-switch { top: auto; right: auto; bottom: 92px; left: 50%; transform: translateX(-50%); }
+</style>
+</head>
+<body class="macos lang_zh_cn is-desktop" data-page="admin-desktop">
+
+<div class="wallpaper" aria-hidden="true"></div>
+<div class="wallpaper-grain" aria-hidden="true"></div>
+
+<div class="preview-switch">
+	<a href="mock-desktop.html">模拟桌面</a>
+	<a href="mock-window.html">模拟窗口</a>
+	<a href="desktop.html">静态桌面</a>
+	<a href="#" onclick="document.documentElement.setAttribute('data-darkmode', document.documentElement.getAttribute('data-darkmode') === 'true' ? 'false' : 'true'); return false;">明/暗</a>
+</div>
+
+<header class="menubar" id="menubar">
+	<div class="menubar-side menubar-left">
+		<a class="menubar-logo" href="#" title="桌面">
+			<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+				<path d="M3.2 6.6a13 13 0 0 1 17.6 0"/><path d="M6.4 10.2a8.6 8.6 0 0 1 11.2 0"/>
+				<path d="M9.4 13.8a4.4 4.4 0 0 1 5.2 0"/><circle cx="12" cy="17.6" r="1.15" fill="currentColor" stroke="none"/>
+			</svg>
+		</a>
+		<button class="menubar-item menubar-icon menubar-sidebar-toggle" id="menubar-sidebar" type="button">
+			<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg>
+		</button>
+		<ul class="menubar-items" id="menubar-items"></ul>
+	</div>
+	<div class="menubar-side menubar-right">
+		<div id="indicators" class="indicators"></div>
+		<button class="menubar-item menubar-icon" id="menubar-wifi" type="button" title="无线">
+			<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+				<path d="M2.7 8.4a15 15 0 0 1 18.6 0"/><path d="M6 12a10 10 0 0 1 12 0"/>
+				<path d="M9.4 15.6a5.4 5.4 0 0 1 5.2 0"/><circle cx="12" cy="19" r="1.05" fill="currentColor" stroke="none"/>
+			</svg>
+		</button>
+		<button class="menubar-item menubar-icon" id="menubar-darkmode" type="button" title="外观">
+			<svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"/></svg>
+			<svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.4 14.2A8.6 8.6 0 0 1 9.8 3.6a8.7 8.7 0 1 0 10.6 10.6z"/></svg>
+		</button>
+		<button class="menubar-item menubar-clock" id="menubar-clock" type="button">--:--</button>
+		<div class="menubar-menu" id="menubar-user">
+			<button class="menubar-item menubar-user" type="button"><span class="menubar-avatar">r</span><span class="menubar-username">root</span></button>
+			<ul class="menubar-dropdown">
+				<li><a class="dropdown-item" href="#">系统</a></li>
+				<li><a class="dropdown-item" href="#">管理权</a></li>
+				<li><a class="dropdown-item" href="#">概览</a></li>
+				<li class="dropdown-sep"></li>
+				<li><a class="dropdown-item" href="#">重启</a></li>
+				<li><a class="dropdown-item" href="#">退出登录</a></li>
+			</ul>
+		</div>
+	</div>
+</header>
+
+<div class="alerts" id="alerts"></div>
+
+<main class="desktop-main">
+	<div id="view"><div class="spinning">正在加载视图…</div></div>
+</main>
+
+<nav class="dock" id="dock">
+	<div class="dock-inner" id="dock-apps"></div>
+</nav>
+
+<script src="mock/luci-mock.js"></script>
+<script>
+	(function() {
+		var errorBox = null;
+
+		function fail(err) {
+			console.error(err);
+
+			errorBox = document.createElement('div');
+			errorBox.className = 'preview-error';
+			errorBox.textContent = '模拟运行出错：' + (err && err.stack || err);
+			document.body.appendChild(errorBox);
+		}
+
+		MockLuCI.setPath([ 'desktop' ]);
+
+		(async function() {
+			await MockLuCI.bootChrome();
+			await MockLuCI.bootDesktop(document.getElementById('view'));
+			document.getElementById('view').querySelectorAll('.spinning').forEach(function(e) { e.remove(); });
+		})().catch(fail);
+	})();
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-darkmode="false">
+<head>
+<meta charset="utf-8">
+<title>主题预览 — 响应式</title>
+<style>
+	body { margin: 0; padding: 16px; background: #222; font-family: system-ui, sans-serif; color: #ddd; }
+	h2 { font-size: 14px; margin: 0 0 8px; }
+	.row { display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap; }
+	figure { margin: 0; }
+	iframe { border: 0; border-radius: 10px; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,.5); display: block; }
+	.preview-switch { top: auto; right: auto; bottom: 92px; left: 50%; transform: translateX(-50%); }
+</style>
+</head>
+<body>
+<div class="row">
+	<figure>
+		<h2>桌面 390×780</h2>
+		<iframe src="mock-desktop.html" width="390" height="780"></iframe>
+	</figure>
+	<figure>
+		<h2>窗口 390×780</h2>
+		<iframe src="window.html" width="390" height="780"></iframe>
+	</figure>
+	<figure>
+		<h2>窗口 820×700</h2>
+		<iframe src="window.html" width="820" height="700"></iframe>
+	</figure>
+	<figure>
+		<h2>桌面 1280×800</h2>
+		<iframe src="mock-desktop.html" width="1280" height="800"></iframe>
+	</figure>
+</div>
+</body>
+</html>

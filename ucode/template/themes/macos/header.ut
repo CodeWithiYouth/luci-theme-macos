@@ -1,0 +1,224 @@
+{#
+ luci-theme-macos - macOS inspired desktop theme for LuCI
+ Licensed to the public under the Apache License 2.0.
+-#}
+
+{%
+	import { getuid, getspnam } from 'luci.core';
+
+	const boardinfo = ubus.call('system', 'board') ?? {};
+	const reqpath = ctx.request_path ?? [];
+	const is_desktop = !length(reqpath) || (reqpath[0] == 'admin' && (length(reqpath) == 1 || reqpath[1] == 'desktop'));
+	const brand = boardinfo.hostname ?? '?';
+	const alerts = [];
+
+	if (getuid() == 0 && getspnam('root')?.pwdp === '') {
+		alerts.push({
+			kind: 'warning',
+			title: _('No password set!'),
+			text: _('There is no password set on this router. Please configure a root password to protect the web interface.'),
+			href: dispatcher.lookup('admin/system/admin') ? dispatcher.build_url('admin/system/admin') : null,
+			action: _('Go to password configuration...')
+		});
+	}
+
+	if (boardinfo.rootfs_type == 'initramfs') {
+		alerts.push({
+			kind: 'warning',
+			title: _('System running in recovery (initramfs) mode.'),
+			text: _('No changes to settings will be stored and are lost after rebooting. This mode should only be used to install a firmware upgrade'),
+			href: dispatcher.lookup('admin/system/flash') ? dispatcher.build_url('admin/system/flash') : null,
+			action: _('Go to firmware upgrade...')
+		});
+	}
+
+	http.prepare_content('text/html; charset=UTF-8');
+-%}
+<!DOCTYPE html>
+<html lang="{{ dispatcher.lang }}" data-theme="macos">
+	<head>
+		<meta charset="utf-8">
+		<title>{{ striptags(`${brand}${dispatched?.title ? ` | ${_(dispatched.title)}` : ''}`) }}</title>
+		<script>
+			(function() {
+				var stored = null;
+
+				try { stored = localStorage.getItem('macos-darkmode'); } catch (e) {}
+
+				var dark = (stored != null)
+					? (stored === '1')
+					: window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+				document.documentElement.setAttribute('data-darkmode', dark ? 'true' : 'false');
+
+				/* pages loaded into a window iframe render without chrome */
+				try {
+					if (window.self !== window.top)
+						document.documentElement.setAttribute('data-embed', '1');
+				}
+				catch (e) {
+					document.documentElement.setAttribute('data-embed', '1');
+				}
+			})();
+		</script>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+		<meta name="darkreader-lock">
+		<link rel="stylesheet" href="{{ media }}/cascade.css">
+		<link rel="icon" href="{{ media }}/logo.svg" sizes="any">
+		{% if (dispatched?.css): %}
+		<link rel="stylesheet" href="{{ resource }}/{{ dispatched.css }}">
+		{% endif %}
+		{% if (css): %}
+		<style>{{ css }}</style>
+		{% endif %}
+		<script src="{{ dispatcher.build_url('admin/translations', dispatcher.lang) }}"></script>
+		<script src="{{ resource }}/cbi.js"></script>
+	</head>
+
+	<body class="macos lang_{{ dispatcher.lang }} {{ blank_page ? 'is-blank' : (is_desktop ? 'is-desktop' : 'is-window') }}" data-page="{{ entityencode(join('-', length(ctx.request_path) ? ctx.request_path : ctx.path), true) }}">
+
+		<div class="wallpaper" aria-hidden="true"></div>
+		<div class="wallpaper-grain" aria-hidden="true"></div>
+
+		{% if (!blank_page): %}
+		<header class="menubar" id="menubar">
+			<div class="menubar-side menubar-left">
+				<a class="menubar-logo" href="{{ dispatcher.build_url('admin/desktop') }}" data-app="desktop" data-label="{{ _('Desktop') }}" title="{{ _('Desktop') }}">
+					<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true">
+						<path d="M3.2 6.6a13 13 0 0 1 17.6 0"/>
+						<path d="M6.4 10.2a8.6 8.6 0 0 1 11.2 0"/>
+						<path d="M9.4 13.8a4.4 4.4 0 0 1 5.2 0"/>
+						<circle cx="12" cy="17.6" r="1.15" fill="currentColor" stroke="none"/>
+					</svg>
+				</a>
+				<button class="menubar-item menubar-icon menubar-sidebar-toggle" id="menubar-sidebar" type="button" title="{{ _('Sidebar') }}">
+					<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+						<path d="M4 6.5h16M4 12h16M4 17.5h16"/>
+					</svg>
+				</button>
+				<ul class="menubar-items" id="menubar-items"></ul>
+				<ul class="menubar-items menubar-modes" id="modemenu" style="display:none"></ul>
+			</div>
+
+			<div class="menubar-side menubar-right">
+				<div id="indicators" class="indicators"></div>
+
+				<button class="menubar-item menubar-icon" id="menubar-wifi" type="button" title="{{ _('Wireless') }}">
+					<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true">
+						<path d="M2.7 8.4a15 15 0 0 1 18.6 0"/>
+						<path d="M6 12a10 10 0 0 1 12 0"/>
+						<path d="M9.4 15.6a5.4 5.4 0 0 1 5.2 0"/>
+						<circle cx="12" cy="19" r="1.05" fill="currentColor" stroke="none"/>
+					</svg>
+				</button>
+
+				<button class="menubar-item menubar-icon" id="menubar-darkmode" type="button" title="{{ _('Appearance') }}">
+					<svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true">
+						<circle cx="12" cy="12" r="4.1"/>
+						<path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"/>
+					</svg>
+					<svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M20.4 14.2A8.6 8.6 0 0 1 9.8 3.6a8.7 8.7 0 1 0 10.6 10.6z"/>
+					</svg>
+				</button>
+
+				<button class="menubar-item menubar-clock" id="menubar-clock" type="button" title="{{ _('Clock') }}">--:--</button>
+
+				<div class="menubar-menu" id="menubar-user">
+					<button class="menubar-item menubar-user" type="button">
+						<span class="menubar-avatar">r</span>
+						<span class="menubar-username">root</span>
+					</button>
+					<ul class="menubar-dropdown">
+						<li><a class="dropdown-item" href="{{ dispatcher.build_url('admin/system/system') }}" data-app="system" data-label="{{ _('System') }}">{{ _('System') }}</a></li>
+						<li><a class="dropdown-item" href="{{ dispatcher.build_url('admin/system/admin') }}" data-app="system" data-label="{{ _('Administration') }}">{{ _('Administration') }}</a></li>
+						<li><a class="dropdown-item" href="{{ dispatcher.build_url('admin/status/overview') }}" data-app="status" data-label="{{ _('Overview') }}">{{ _('Overview') }}</a></li>
+						<li class="dropdown-sep"></li>
+						<li><a class="dropdown-item" href="{{ dispatcher.build_url('admin/system/reboot') }}">{{ _('Reboot') }}</a></li>
+						<li><a class="dropdown-item" href="{{ dispatcher.build_url('admin/logout') }}">{{ _('Log out') }}</a></li>
+					</ul>
+				</div>
+			</div>
+		</header>
+
+		<div class="alerts" id="alerts">
+			{% for (let a in alerts): %}
+			<div class="alert-message {{ a.kind }}">
+				<div class="alert-body">
+					<strong>{{ a.title }}</strong>
+					<p>{{ a.text }}</p>
+					{% if (a.href): %}
+					<a class="btn" href="{{ a.href }}">{{ a.action }}</a>
+					{% endif %}
+				</div>
+				<button class="alert-close" type="button" aria-label="{{ _('Close') }}">&times;</button>
+			</div>
+			{% endfor %}
+		</div>
+
+		<noscript>
+			<div class="alert-message error">
+				<div class="alert-body">
+					<strong>{{ _('JavaScript required!') }}</strong>
+					<p>{{ _('You must enable JavaScript in your browser or LuCI will not work properly.') }}</p>
+				</div>
+			</div>
+		</noscript>
+		{% endif %}
+
+		{% if (blank_page): %}
+		<main class="auth-main">
+		{% endif %}
+
+		{% if (!blank_page && is_desktop): %}
+		<main class="desktop-main">
+		{% endif %}
+
+		{% if (!blank_page && !is_desktop): %}
+		<main class="workspace">
+			<div class="mac-window" id="mac-window">
+				<aside class="sidebar" id="sidebar">
+					<div class="sidebar-scroll">
+						<div class="sidebar-head">
+							<img class="sidebar-icon" id="sidebar-icon" src="{{ media }}/icons/desktop.svg" alt="">
+							<div class="sidebar-headings">
+								<span class="sidebar-title" id="sidebar-title">{{ _(dispatched?.title ?? '') }}</span>
+								<span class="sidebar-subtitle" id="sidebar-subtitle">{{ brand }}</span>
+							</div>
+						</div>
+						<nav class="sidebar-nav" id="sidebar-nav"></nav>
+					</div>
+					<div class="sidebar-foot">
+						<span>{{ version.distname }} {{ version.distversion }}</span>
+						<span>{{ version.luciname }} {{ version.luciversion }}</span>
+					</div>
+				</aside>
+
+				<div class="sidebar-scrim" id="sidebar-scrim" aria-hidden="true"></div>
+
+				<section class="window-main">
+					<div class="titlebar" id="titlebar">
+						<div class="traffic-lights">
+							<button class="tl tl-close" id="tl-close" type="button" title="{{ _('Desktop') }}"><span>&times;</span></button>
+							<button class="tl tl-min" id="tl-min" type="button" title="{{ _('Sidebar') }}"><span>&minus;</span></button>
+							<button class="tl tl-max" id="tl-max" type="button" title="{{ _('Full screen') }}"><span>&plus;</span></button>
+						</div>
+						<div class="titlebar-title" id="titlebar-title">{{ _(dispatched?.title ?? '') }}</div>
+						<div class="titlebar-actions">
+							<button class="titlebar-button" id="titlebar-reload" type="button" title="{{ _('Reload') }}">
+								<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d="M20 11a8 8 0 1 0-2.3 6.3"/>
+									<path d="M20 4.5V11h-6.2"/>
+								</svg>
+							</button>
+						</div>
+					</div>
+
+					<div class="window-toolbar" id="window-toolbar">
+						<div id="tabmenu" style="display:none"></div>
+						<div class="toolbar-indicators" id="embed-indicators"></div>
+					</div>
+
+					<div class="window-content" id="window-content">
+						<div class="content-inner">
+		{% endif %}

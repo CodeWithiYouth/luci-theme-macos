@@ -1,0 +1,14 @@
+# build output
+*.ipk
+*.tar.gz
+*.bin
+
+# editor / OS
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# node
+node_modules/

@@ -1,0 +1,91 @@
+{%
+	http.prepare_content('text/html; charset=UTF-8');
+	const brand = ubus.call('system', 'board')?.hostname ?? 'OpenWrt';
+-%}
+{% include('header', { blank_page: true }) %}
+
+<div class="auth-card" role="main">
+	<div class="auth-avatar" aria-hidden="true">
+		<svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+			<path d="M12 12.2a4.1 4.1 0 1 0 0-8.2 4.1 4.1 0 0 0 0 8.2z"/>
+			<path d="M4.6 20.4c.7-3.9 3.8-6.3 7.4-6.3s6.7 2.4 7.4 6.3"/>
+		</svg>
+	</div>
+
+	<h1 class="auth-host">{{ brand }}</h1>
+	<p class="auth-hint">{{ _('Enter your credentials to unlock this router') }}</p>
+
+	<form method="post" class="auth-form" id="login-form">
+		<div class="auth-field">
+			<label for="luci_username">{{ _('Username') }}</label>
+			<input name="luci_username" id="luci_username" type="text" autocomplete="username" value="{{ entityencode(duser, true) }}" placeholder="{{ _('Username') }}" spellcheck="false" autocapitalize="off">
+		</div>
+
+		<div class="auth-field">
+			<label for="luci_password">{{ _('Password') }}</label>
+			<input name="luci_password" id="luci_password" type="password" autocomplete="current-password" placeholder="{{ _('Password') }}">
+		</div>
+
+		{% if (auth_fields): %}
+			{% for (let field in auth_fields): %}
+			<div class="auth-field">
+				<label for="{{ field.name }}">{{ _(field.label ?? field.name) }}</label>
+				<input
+					name="{{ field.name }}"
+					id="{{ field.name }}"
+					type="{{ field.type ?? 'text' }}"
+					{% if (field.placeholder): %}placeholder="{{ field.placeholder }}"{% endif %}
+					{% if (field.inputmode): %}inputmode="{{ field.inputmode }}"{% endif %}
+					{% if (field.pattern): %}pattern="{{ field.pattern }}"{% endif %}
+					{% if (field.maxlength): %}maxlength="{{ field.maxlength }}"{% endif %}
+					{% if (field.autocomplete): %}autocomplete="{{ field.autocomplete }}"{% endif %}
+					{% if (field.required): %}required{% endif %}
+				>
+			</div>
+			{% endfor %}
+		{% endif %}
+
+		{% if (auth_html): %}
+		<div class="auth-extra">{{ auth_html }}</div>
+		{% endif %}
+
+		{% if (auth_message): %}
+		<div class="auth-message{% if (auth_plugin): %} warning{% endif %}">
+			{{ auth_message }}
+		</div>
+		{% elif (fuser): %}
+		<div class="auth-message error">
+			{{ _('Invalid username and/or password! Please try again.') }}
+		</div>
+		{% endif %}
+
+		<button class="auth-submit" id="login-submit" type="submit" data-loading="{{ _('Logging in…') }}">{{ _('Log in') }}</button>
+	</form>
+
+	<div class="auth-foot">
+		<span>{{ version.distname }} {{ version.distversion }}</span>
+		<span>LuCI {{ version.luciversion }}</span>
+	</div>
+</div>
+
+<script>
+	(function() {
+		var form = document.getElementById('login-form'),
+		    btn = document.getElementById('login-submit'),
+		    pwd = document.getElementById('luci_password');
+
+		if (!form || !btn)
+			return;
+
+		form.addEventListener('submit', function() {
+			btn.classList.add('loading');
+			btn.disabled = true;
+			btn.textContent = btn.getAttribute('data-loading') || btn.textContent;
+		});
+
+		if (pwd)
+			pwd.focus();
+	})();
+</script>
+
+{% include('footer', { blank_page: true }) %}

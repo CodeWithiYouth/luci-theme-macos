@@ -1,0 +1,29 @@
+#!/bin/sh
+
+changed=0
+
+set_opt() {
+	local key=$1
+	local val=$2
+
+	if ! uci -q get "luci.$key" 2>/dev/null; then
+		uci set "luci.$key=$val"
+		changed=1
+	fi
+}
+
+set_opt themes.macOS /luci-static/macos
+
+# activate the theme on a fresh install, but never override the user's
+# choice when the package is upgraded
+if [ "$PKG_UPGRADE" != 1 ] && [ "$(uci -q get luci.main.mediaurlbase)" != "/luci-static/macos" ]; then
+	uci set luci.main.mediaurlbase=/luci-static/macos
+	changed=1
+fi
+
+if [ $changed = 1 ]; then
+	uci commit luci
+	rm -f /tmp/luci-indexcache
+fi
+
+exit 0

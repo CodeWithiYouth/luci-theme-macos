@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-darkmode="false">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>主题预览 — 窗口</title>
+<link rel="stylesheet" href="../htdocs/luci-static/macos/cascade.css">
+<style>
+	/* preview only */
+	.preview-switch {
+		position: fixed; bottom: 88px; left: 12px; z-index: 9999;
+		display: flex; gap: 6px;
+	}
+	.preview-switch a {
+		padding: 4px 10px; border-radius: 8px; font-size: 12px;
+		background: rgba(0,0,0,.45); color: #fff; text-decoration: none;
+		backdrop-filter: blur(10px);
+	}
+	.preview-switch { top: auto; right: auto; bottom: 92px; left: 50%; transform: translateX(-50%); }
+</style>
+</head>
+<body class="macos lang_zh_cn is-window" data-page="admin-system-system">
+
+<div class="wallpaper" aria-hidden="true"></div>
+<div class="wallpaper-grain" aria-hidden="true"></div>
+
+<div class="preview-switch">
+	<a href="desktop.html">桌面</a>
+	<a href="window.html">窗口</a>
+	<a href="#" onclick="document.documentElement.setAttribute('data-darkmode', document.documentElement.getAttribute('data-darkmode') === 'true' ? 'false' : 'true'); return false;">明/暗</a>
+</div>
+
+<header class="menubar" id="menubar">
+	<div class="menubar-side menubar-left">
+		<a class="menubar-logo" href="#" title="桌面">
+			<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+				<path d="M3.2 6.6a13 13 0 0 1 17.6 0"/>
+				<path d="M6.4 10.2a8.6 8.6 0 0 1 11.2 0"/>
+				<path d="M9.4 13.8a4.4 4.4 0 0 1 5.2 0"/>
+				<circle cx="12" cy="17.6" r="1.15" fill="currentColor" stroke="none"/>
+			</svg>
+		</a>
+		<button class="menubar-item menubar-icon menubar-sidebar-toggle" type="button" onclick="document.body.classList.toggle('sidebar-hidden')">
+			<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg>
+		</button>
+		<ul class="menubar-items">
+			<li class="menubar-menu is-app">
+				<button class="menubar-item" type="button">系统</button>
+				<ul class="menubar-dropdown">
+					<li><a class="dropdown-item" href="#">桌面</a></li>
+					<li><a class="dropdown-item active" href="#">系统</a></li>
+					<li><a class="dropdown-item" href="#">管理权</a></li>
+					<li><a class="dropdown-item" href="#">软件包</a></li>
+					<li><a class="dropdown-item" href="#">启动项</a></li>
+					<li><a class="dropdown-item" href="#">计划任务</a></li>
+					<li><a class="dropdown-item" href="#">挂载点</a></li>
+					<li><a class="dropdown-item" href="#">备份/升级</a></li>
+					<li><a class="dropdown-item" href="#">重启</a></li>
+				</ul>
+			</li>
+			<li class="menubar-menu">
+				<button class="menubar-item" type="button">前往</button>
+				<ul class="menubar-dropdown">
+					<li><a class="dropdown-item" href="#">桌面</a></li>
+					<li><a class="dropdown-item" href="#">状态</a></li>
+					<li><a class="dropdown-item active" href="#">系统</a></li>
+					<li><a class="dropdown-item" href="#">网络</a></li>
+					<li><a class="dropdown-item" href="#">服务</a></li>
+					<li><a class="dropdown-item" href="#">VPN</a></li>
+					<li><a class="dropdown-item" href="#">防火墙</a></li>
+				</ul>
+			</li>
+			<li class="menubar-menu">
+				<button class="menubar-item" type="button">显示</button>
+				<ul class="menubar-dropdown">
+					<li><button class="dropdown-item" type="button">刷新页面</button></li>
+					<li><button class="dropdown-item" type="button">显示/隐藏边栏</button></li>
+					<li><button class="dropdown-item" type="button">全屏</button></li>
+					<li class="dropdown-sep"></li>
+					<li><button class="dropdown-item" type="button">浅色/深色</button></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+
+	<div class="menubar-side menubar-right">
+		<div id="indicators" class="indicators">
+			<span data-indicator="uci-changes" data-style="active" data-clickable="1">未保存的更改: 2</span>
+		</div>
+		<button class="menubar-item menubar-icon is-up" type="button" title="OpenWrt-5G">
+			<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+				<path d="M2.7 8.4a15 15 0 0 1 18.6 0"/><path d="M6 12a10 10 0 0 1 12 0"/><path d="M9.4 15.6a5.4 5.4 0 0 1 5.2 0"/><circle cx="12" cy="19" r="1.05" fill="currentColor" stroke="none"/>
+			</svg>
+		</button>
+		<button class="menubar-item menubar-icon" type="button" title="外观">
+			<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"/></svg>
+		</button>
+		<button class="menubar-item menubar-clock" type="button">周三 22:41</button>
+		<div class="menubar-menu">
+			<button class="menubar-item menubar-user" type="button">
+				<span class="menubar-avatar">r</span>
+				<span class="menubar-username">root</span>
+			</button>
+			<ul class="menubar-dropdown">
+				<li><a class="dropdown-item" href="#">系统</a></li>
+				<li><a class="dropdown-item" href="#">管理权</a></li>
+				<li><a class="dropdown-item" href="#">概览</a></li>
+				<li class="dropdown-sep"></li>
+				<li><a class="dropdown-item" href="#">重启</a></li>
+				<li><a class="dropdown-item" href="#">退出登录</a></li>
+			</ul>
+		</div>
+	</div>
+</header>
+
+<div class="alerts">
+	<div class="alert-message warning">
+		<div class="alert-body">
+			<strong>未设置密码！</strong>
+			<p>此路由器没有设置密码，请配置 root 密码以保护 Web 界面。</p>
+			<a class="btn" href="#">前往密码设置…</a>
+		</div>
+		<button class="alert-close" type="button">&times;</button>
+	</div>
+</div>
+
+<main class="workspace">
+	<div class="mac-window">
+		<aside class="sidebar">
+			<div class="sidebar-scroll">
+				<div class="sidebar-head">
+					<img class="sidebar-icon" src="../htdocs/luci-static/macos/icons/system.svg" alt="">
+					<div class="sidebar-headings">
+						<span class="sidebar-title">系统</span>
+						<span class="sidebar-subtitle">OpenWrt</span>
+					</div>
+				</div>
+				<nav class="sidebar-nav">
+					<div class="sidebar-group">
+						<div class="sidebar-group-title">应用</div>
+						<a class="sidebar-item" href="#"><img class="sidebar-appicon" src="../htdocs/luci-static/macos/icons/desktop.svg" alt=""><span class="sidebar-label">桌面</span></a>
+						<a class="sidebar-item" href="#"><img class="sidebar-appicon" src="../htdocs/luci-static/macos/icons/status.svg" alt=""><span class="sidebar-label">状态</span></a>
+						<a class="sidebar-item active" href="#"><img class="sidebar-appicon" src="../htdocs/luci-static/macos/icons/system.svg" alt=""><span class="sidebar-label">系统</span></a>
+						<a class="sidebar-item" href="#"><img class="sidebar-appicon" src="../htdocs/luci-static/macos/icons/network.svg" alt=""><span class="sidebar-label">网络</span></a>
+						<a class="sidebar-item" href="#"><img class="sidebar-appicon" src="../htdocs/luci-static/macos/icons/services.svg" alt=""><span class="sidebar-label">服务</span></a>
+						<a class="sidebar-item" href="#"><img class="sidebar-appicon" src="../htdocs/luci-static/macos/icons/vpn.svg" alt=""><span class="sidebar-label">VPN</span></a>
+						<a class="sidebar-item" href="#"><img class="sidebar-appicon" src="../htdocs/luci-static/macos/icons/firewall.svg" alt=""><span class="sidebar-label">防火墙</span></a>
+					</div>
+					<div class="sidebar-group">
+						<div class="sidebar-group-title">系统</div>
+						<a class="sidebar-item active" href="#"><img class="sidebar-appicon" src="../htdocs/luci-static/macos/icons/system.svg" alt=""><span class="sidebar-label">系统</span></a>
+						<a class="sidebar-item" href="#"><img class="sidebar-appicon" src="../htdocs/luci-static/macos/icons/users.svg" alt=""><span class="sidebar-label">管理权</span></a>
+						<a class="sidebar-item" href="#"><img class="sidebar-appicon" src="../htdocs/luci-static/macos/icons/software.svg" alt=""><span class="sidebar-label">软件包</span></a>
+						<a class="sidebar-item" href="#"><img class="sidebar-appicon" src="../htdocs/luci-static/macos/icons/processes.svg" alt=""><span class="sidebar-label">启动项</span></a>
+						<a class="sidebar-item" href="#"><img class="sidebar-appicon" src="../htdocs/luci-static/macos/icons/clock.svg" alt=""><span class="sidebar-label">计划任务</span></a>
+						<a class="sidebar-item" href="#"><img class="sidebar-appicon" src="../htdocs/luci-static/macos/icons/storage.svg" alt=""><span class="sidebar-label">挂载点</span></a>
+						<a class="sidebar-item" href="#"><img class="sidebar-appicon" src="../htdocs/luci-static/macos/icons/logs.svg" alt=""><span class="sidebar-label">备份/升级</span></a>
+					</div>
+				</nav>
+			</div>
+			<div class="sidebar-foot">
+				<span>OpenWrt 24.10.0</span>
+				<span>LuCI 24.10</span>
+			</div>
+		</aside>
+
+		<div class="sidebar-scrim"></div>
+
+		<section class="window-main">
+			<div class="titlebar">
+				<div class="traffic-lights">
+					<button class="tl tl-close" type="button" title="桌面"><span>&times;</span></button>
+					<button class="tl tl-min" type="button" title="边栏"><span>&minus;</span></button>
+					<button class="tl tl-max" type="button" title="全屏"><span>&plus;</span></button>
+				</div>
+				<div class="titlebar-title">系统</div>
+				<div class="titlebar-actions">
+					<button class="titlebar-button" type="button">
+						<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 6.3"/><path d="M20 4.5V11h-6.2"/></svg>
+					</button>
+				</div>
+			</div>
+
+			<div class="window-toolbar has-tabs">
+				<div id="tabmenu">
+					<ul class="tabs">
+						<li class="tab active"><a href="#">常规设置</a></li>
+						<li class="tab"><a href="#">日志</a></li>
+						<li class="tab"><a href="#">时间同步</a></li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="window-content">
+				<div class="content-inner">
+					<h2 name="content">系统</h2>
+
+					<div class="cbi-map">
+						<h3>常规设置</h3>
+						<div class="cbi-map-descr">此处配置设备的主机名、时区以及时间同步方式。</div>
+
+						<div class="cbi-section">
+							<div class="cbi-value">
+								<label class="cbi-value-title" for="hostname">主机名</label>
+								<div class="cbi-value-field">
+									<input class="cbi-input-text" id="hostname" type="text" value="OpenWrt">
+									<div class="cbi-value-description">设备在网络中显示的名称。</div>
+								</div>
+							</div>
+
+							<div class="cbi-value">
+								<label class="cbi-value-title" for="tz">时区</label>
+								<div class="cbi-value-field">
+									<select class="cbi-input-select" id="tz">
+										<option>(UTC+08:00) Asia/Shanghai</option>
+										<option>(UTC+09:00) Asia/Tokyo</option>
+										<option>(UTC+00:00) UTC</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="cbi-value">
+								<label class="cbi-value-title">启用 NTP 客户端</label>
+								<div class="cbi-value-field">
+									<input type="checkbox" id="ntp" checked>
+									<label class="cbi-checkbox" for="ntp">与上游时间服务器自动同步</label>
+								</div>
+							</div>
+
+							<div class="cbi-value">
+								<label class="cbi-value-title">日志级别</label>
+								<div class="cbi-value-field">
+									<label class="cbi-radio"><input type="radio" name="loglevel" checked> 普通</label>
+									<label class="cbi-radio"><input type="radio" name="loglevel"> 调试</label>
+									<label class="cbi-radio"><input type="radio" name="loglevel"> 静默</label>
+								</div>
+							</div>
+
+							<div class="cbi-value">
+								<label class="cbi-value-title" for="desc">备注</label>
+								<div class="cbi-value-field">
+									<textarea id="desc" rows="3" placeholder="可选说明…"></textarea>
+								</div>
+							</div>
+
+							<div class="cbi-value">
+								<label class="cbi-value-title">NTP 服务器</label>
+								<div class="cbi-value-field">
+									<div class="cbi-dynlist">
+										<div class="item"><span>0.openwrt.pool.ntp.org</span><button class="cbi-button cbi-button-remove" type="button">删除</button></div>
+										<div class="item"><span>1.openwrt.pool.ntp.org</span><button class="cbi-button cbi-button-remove" type="button">删除</button></div>
+										<div class="add-item">
+											<input class="cbi-input-text" type="text" placeholder="添加服务器地址…">
+											<button class="cbi-button cbi-button-add" type="button">添加</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="cbi-section">
+							<h3>网络接口</h3>
+							<div class="cbi-section-table">
+								<div class="table">
+									<div class="tr table-titles">
+										<div class="th">接口</div>
+										<div class="th">协议</div>
+										<div class="th">地址</div>
+										<div class="th">状态</div>
+										<div class="th cbi-section-actions">操作</div>
+									</div>
+									<div class="tr">
+										<div class="td">lan</div>
+										<div class="td">静态地址</div>
+										<div class="td">192.168.1.1</div>
+										<div class="td"><span class="label success">已连接</span></div>
+										<div class="td cbi-section-actions"><button class="cbi-button cbi-button-edit" type="button">编辑</button></div>
+									</div>
+									<div class="tr">
+										<div class="td">wan</div>
+										<div class="td">DHCP 客户端</div>
+										<div class="td">100.64.12.7</div>
+										<div class="td"><span class="label success">已连接</span></div>
+										<div class="td cbi-section-actions"><button class="cbi-button cbi-button-edit" type="button">编辑</button></div>
+									</div>
+									<div class="tr">
+										<div class="td">wan6</div>
+										<div class="td">DHCPv6 客户端</div>
+										<div class="td">2408:8207::1</div>
+										<div class="td"><span class="label notice">无地址</span></div>
+										<div class="td cbi-section-actions"><button class="cbi-button cbi-button-edit" type="button">编辑</button></div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="cbi-section">
+							<h3>资源占用</h3>
+							<div class="cbi-value">
+								<label class="cbi-value-title">内存</label>
+								<div class="cbi-value-field">
+									<div class="cbi-progressbar" title="118.4 MB / 256.0 MB (46%)"><div style="width:46%"></div></div>
+								</div>
+							</div>
+							<div class="cbi-value">
+								<label class="cbi-value-title">存储</label>
+								<div class="cbi-value-field">
+									<div class="cbi-progressbar" title="12.1 MB / 29.7 MB (41%)"><div style="width:41%"></div></div>
+								</div>
+							</div>
+						</div>
+
+						<div class="cbi-page-actions">
+							<button class="cbi-button cbi-button-reset" type="button">恢复默认</button>
+							<button class="cbi-button cbi-button-save" type="button">保存</button>
+							<button class="cbi-button cbi-button-apply important" type="button">保存并应用</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+</main>
+
+<nav class="dock">
+	<div class="dock-inner">
+		<a class="dock-item" href="desktop.html" data-label="桌面"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/desktop.svg" alt=""><span class="dock-dot"></span></a>
+		<a class="dock-item" href="#" data-label="状态"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/status.svg" alt=""><span class="dock-dot"></span></a>
+		<a class="dock-item is-active" href="#" data-label="系统"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/system.svg" alt=""><span class="dock-dot"></span></a>
+		<a class="dock-item" href="#" data-label="网络"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/network.svg" alt=""><span class="dock-dot"></span></a>
+		<a class="dock-item" href="#" data-label="服务"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/services.svg" alt=""><span class="dock-dot"></span></a>
+		<a class="dock-item" href="#" data-label="VPN"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/vpn.svg" alt=""><span class="dock-dot"></span></a>
+		<a class="dock-item" href="#" data-label="防火墙"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/firewall.svg" alt=""><span class="dock-dot"></span></a>
+		<div class="dock-separator"></div>
+		<a class="dock-item dock-action" href="#" data-label="重启"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/reboot.svg" alt=""><span class="dock-dot"></span></a>
+		<a class="dock-item dock-action" href="#" data-label="退出登录"><img class="dock-icon" src="../htdocs/luci-static/macos/icons/logout.svg" alt=""><span class="dock-dot"></span></a>
+	</div>
+</nav>
+
+<script>
+	document.querySelectorAll('.alert-close').forEach(function(btn) {
+		btn.addEventListener('click', function() { btn.closest('.alert-message').remove(); });
+	});
+	document.querySelectorAll('.menubar-sidebar-toggle, .tl-min').forEach(function(btn) {
+		btn.addEventListener('click', function() { document.body.classList.toggle('sidebar-open'); });
+	});
+	document.querySelector('.sidebar-scrim').addEventListener('click', function() {
+		document.body.classList.remove('sidebar-open');
+	});
+</script>
+</body>
+</html>

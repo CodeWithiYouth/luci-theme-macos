@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-darkmode="false">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>主题预览 — 登录</title>
+<link rel="stylesheet" href="../htdocs/luci-static/macos/cascade.css">
+</head>
+<body class="macos lang_zh_cn is-blank">
+
+<div class="wallpaper" aria-hidden="true"></div>
+<div class="wallpaper-grain" aria-hidden="true"></div>
+
+<main class="auth-main">
+	<div class="auth-card" role="main">
+		<div class="auth-avatar" aria-hidden="true">
+			<svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M12 12.2a4.1 4.1 0 1 0 0-8.2 4.1 4.1 0 0 0 0 8.2z"/>
+				<path d="M4.6 20.4c.7-3.9 3.8-6.3 7.4-6.3s6.7 2.4 7.4 6.3"/>
+			</svg>
+		</div>
+
+		<h1 class="auth-host">OpenWrt</h1>
+		<p class="auth-hint">输入凭据以解锁此路由器</p>
+
+		<form method="post" class="auth-form" onsubmit="return false;">
+			<div class="auth-field">
+				<label for="luci_username">用户名</label>
+				<input id="luci_username" type="text" value="root" placeholder="用户名">
+			</div>
+			<div class="auth-field">
+				<label for="luci_password">密码</label>
+				<input id="luci_password" type="password" placeholder="密码" autofocus>
+			</div>
+			<div class="auth-message error">用户名或密码无效，请重试。</div>
+			<button class="auth-submit" type="submit">登录</button>
+		</form>
+
+		<div class="auth-foot">
+			<span>OpenWrt 24.10.0</span>
+			<span>LuCI 24.10</span>
+		</div>
+	</div>
+</main>
+
+</body>
+</html>

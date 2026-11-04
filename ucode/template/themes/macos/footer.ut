@@ -1,0 +1,30 @@
+{%
+	const reqpath = ctx.request_path ?? [];
+	const is_desktop = !length(reqpath) || (reqpath[0] == 'admin' && (length(reqpath) == 1 || reqpath[1] == 'desktop'));
+-%}
+
+		{% if (blank_page): %}
+		</main>
+		{% endif %}
+
+		{% if (!blank_page && is_desktop): %}
+		</main>
+		{% endif %}
+
+		{% if (!blank_page && !is_desktop): %}
+						</div>
+					</div>
+				</section>
+			</div>
+		</main>
+		{% endif %}
+
+		{% if (!blank_page): %}
+		<nav class="dock" id="dock" aria-label="{{ _('Dock') }}">
+			<div class="dock-inner" id="dock-apps"></div>
+		</nav>
+
+		<script>L.require('menu-macos')</script>
+		{% endif %}
+	</body>
+</html>
