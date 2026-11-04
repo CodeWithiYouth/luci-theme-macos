@@ -1,4 +1,4 @@
-name: Build apk
+name: Build packages
 
 on:
   push:
@@ -10,9 +10,23 @@ permissions:
   contents: read
 
 jobs:
-  build-apk:
-    name: Build luci-theme-macos apk
+  build:
+    name: Build ${{ matrix.label }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: apk (OpenWrt 25.12.6)
+            sdk_version: 25.12.6
+            sdk_file: openwrt-sdk-25.12.6-x86-64_gcc-14.3.0_musl.Linux-x86_64.tar.zst
+            ext: apk
+            artifact: luci-theme-macos-apk
+          - label: ipk (OpenWrt 24.10.8)
+            sdk_version: 24.10.8
+            sdk_file: openwrt-sdk-24.10.8-x86-64_gcc-13.3.0_musl.Linux-x86_64.tar.zst
+            ext: ipk
+            artifact: luci-theme-macos-ipk
 
     steps:
       - name: Checkout
@@ -23,14 +37,13 @@ jobs:
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc || true
           df -h /
 
-      - name: Download OpenWrt SDK 25.12.6 (x86/64)
+      - name: Download OpenWrt SDK ${{ matrix.sdk_version }} (x86/64)
         run: |
-          SDK_FILE=openwrt-sdk-25.12.6-x86-64_gcc-14.3.0_musl.Linux-x86_64.tar.zst
-          curl -fL --retry 3 -o "/tmp/$SDK_FILE" \
-            "https://downloads.openwrt.org/releases/25.12.6/targets/x86/64/$SDK_FILE"
+          curl -fL --retry 3 -o "/tmp/${{ matrix.sdk_file }}" \
+            "https://downloads.openwrt.org/releases/${{ matrix.sdk_version }}/targets/x86/64/${{ matrix.sdk_file }}"
           mkdir -p "$RUNNER_TEMP/sdk"
-          tar -I zstd -xf "/tmp/$SDK_FILE" -C "$RUNNER_TEMP/sdk" --strip-components=1
-          rm -f "/tmp/$SDK_FILE"
+          tar -I zstd -xf "/tmp/${{ matrix.sdk_file }}" -C "$RUNNER_TEMP/sdk" --strip-components=1
+          rm -f "/tmp/${{ matrix.sdk_file }}"
           ls "$RUNNER_TEMP/sdk" | head -20
 
       - name: Add theme to the SDK
@@ -57,8 +70,7 @@ jobs:
         working-directory: ${{ runner.temp }}/sdk
         run: |
           mkdir -p "$GITHUB_WORKSPACE/out"
-          find bin/packages -name 'luci-theme-macos*.apk' -exec cp -v {} "$GITHUB_WORKSPACE/out/" \;
-          find bin/packages -name 'luci-theme-macos*.ipk' -exec cp -v {} "$GITHUB_WORKSPACE/out/" \;
+          find bin/packages -name 'luci-theme-macos*.${{ matrix.ext }}' -exec cp -v {} "$GITHUB_WORKSPACE/out/" \;
           ls -l "$GITHUB_WORKSPACE/out"
           cd "$GITHUB_WORKSPACE/out"
           sha256sum * > sha256sums.txt
@@ -66,11 +78,11 @@ jobs:
       - name: Inspect package
         working-directory: ${{ runner.temp }}/sdk
         run: |
-          PKG=$(ls "$GITHUB_WORKSPACE"/out/*.apk | head -1)
+          PKG=$(ls "$GITHUB_WORKSPACE"/out/*.${{ matrix.ext }} | head -1)
           echo "== $PKG =="
           ls -l "$PKG"
 
-          if [ -x staging_dir/host/bin/apk ]; then
+          if [ "${PKG##*.}" = apk ] && [ -x staging_dir/host/bin/apk ]; then
             staging_dir/host/bin/apk --version || true
             staging_dir/host/bin/apk adbdump "$PKG" > /tmp/pkg.json 2>/tmp/pkg.err || true
             echo "== adbdump (head) =="
@@ -81,29 +93,34 @@ jobs:
             grep -oE '"(path|name)":"[^"]*"' /tmp/pkg.json | head -40 || true
           fi
 
+          if [ "${PKG##*.}" = ipk ]; then
+            tar -tzf "$PKG" | head -40 || true
+          fi
+
           echo "== staged tree =="
           find build_dir -path '*luci-theme-macos*' -type f \( -name '*.ut' -o -name 'cascade.css' -o -name 'menu.d*' \) | head -10
 
-      - name: Upload apk
+      - name: Upload ${{ matrix.ext }}
         uses: actions/upload-artifact@v4
         with:
-          name: luci-theme-macos-apk
+          name: ${{ matrix.artifact }}
           path: out/
           if-no-files-found: error
 
   release:
     name: Publish release assets
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: build-apk
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      - name: Download apk artifact
+      - name: Download all package artifacts
         uses: actions/download-artifact@v4
         with:
-          name: luci-theme-macos-apk
+          pattern: luci-theme-macos-*
+          merge-multiple: true
           path: out
 
       - name: Create / update release

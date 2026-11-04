@@ -142,27 +142,33 @@ make -j$(nproc)
 
 ### 方式二：直接安装预编译包（推荐）
 
-每次推送到 `main`，GitHub Actions 都会用 **OpenWrt 25.12.6 x86/64 SDK** 自动编译并上传 apk：
+每次推送到 `main`，GitHub Actions 会用两个 SDK 各编译一次：
+
+| 包格式 | 适用系统 | 编译 SDK | artifact |
+| --- | --- | --- | --- |
+| `luci-theme-macos-*.apk` | OpenWrt 25.12+（apk） | 25.12.6 x86/64 | `luci-theme-macos-apk` |
+| `luci-theme-macos_*.ipk` | OpenWrt 24.10（opkg） | 24.10.8 x86/64 | `luci-theme-macos-ipk` |
 
 - 下载地址：<https://github.com/CodeWithiYouth/luci-theme-macos/releases/latest>
-- 或从 Actions 的 `luci-theme-macos-apk` artifact 中获取（含 `sha256sums.txt`）
+- 或从 Actions 的对应 artifact 中获取（含 `sha256sums.txt`）
 
-主题与 CPU 架构无关（`PKGARCH=all`），x86/64 SDK 编出的包在 arm、mips 等设备上同样可以安装。
+主题与 CPU 架构无关（`PKGARCH=all`），x86/64 SDK 编出的包在 ARM、MIPS 等设备上同样可以安装。
 
-安装到设备（OpenWrt 25.12 使用 `apk` 包管理器）：
+安装到设备：
 
 ```sh
-# 上传到路由器后
+# 25.12+（apk）
 apk add --allow-untrusted /tmp/luci-theme-macos-*.apk
 
-# 或者先校验收到的文件
-sha256sum luci-theme-macos-*.apk
+# 24.10（opkg）
+opkg install /tmp/luci-theme-macos_*.ipk
+
+# 校验
+sha256sum luci-theme-macos*.apk luci-theme-macos*.ipk
 ```
 
-> SDK 自签名的包不在设备信任列表里，所以首次安装需要 `--allow-untrusted`。
+> SDK 自签名的包不在设备信任列表里，所以 apk 首次安装需要 `--allow-untrusted`。
 > 安装/卸载脚本会自动注册主题，并把 `luci.main.mediaurlbase` 指向 `/luci-static/macos`。
-
-如果设备仍在使用 `opkg`（24.10 及更早），请用方式三自行编译 ipk。
 
 ### 方式三：使用 SDK 单独编译
 
