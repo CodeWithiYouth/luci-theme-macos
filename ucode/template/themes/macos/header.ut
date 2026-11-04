@@ -220,5 +220,5 @@
 					</div>
 
 					<div class="window-content" id="window-content">
-						<div class="content-inner">
+						<div class="content-inner" id="maincontent">
 		{% endif %}
