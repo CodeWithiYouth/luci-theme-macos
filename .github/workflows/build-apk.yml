@@ -63,9 +63,51 @@ jobs:
           cd "$GITHUB_WORKSPACE/out"
           sha256sum * > sha256sums.txt
 
+      - name: Inspect package
+        working-directory: ${{ runner.temp }}/sdk
+        run: |
+          PKG=$(ls "$GITHUB_WORKSPACE"/out/*.apk | head -1)
+          echo "== $PKG =="
+          ls -l "$PKG"
+
+          if [ -x staging_dir/host/bin/apk ]; then
+            staging_dir/host/bin/apk --version || true
+            staging_dir/host/bin/apk adbdump "$PKG" > /tmp/pkg.json 2>/tmp/pkg.err || true
+            echo "== adbdump (head) =="
+            head -c 1500 /tmp/pkg.json || true
+            echo
+            cat /tmp/pkg.err || true
+            echo "== files in package =="
+            grep -oE '"(path|name)":"[^"]*"' /tmp/pkg.json | head -40 || true
+          fi
+
+          echo "== staged tree =="
+          find build_dir -path '*luci-theme-macos*' -type f \( -name '*.ut' -o -name 'cascade.css' -o -name 'menu.d*' \) | head -10
+
       - name: Upload apk
         uses: actions/upload-artifact@v4
         with:
           name: luci-theme-macos-apk
           path: out/
           if-no-files-found: error
+
+  release:
+    name: Publish release assets
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build-apk
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download apk artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: luci-theme-macos-apk
+          path: out
+
+      - name: Create / update release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: out/*
+          generate_release_notes: true

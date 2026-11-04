@@ -1,4 +1,7 @@
 # build output
+dist/
+out/
+*.apk
 *.ipk
 *.tar.gz
 *.bin

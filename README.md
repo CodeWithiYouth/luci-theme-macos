@@ -1,5 +1,9 @@
 # luci-theme-macos
 
+[![Build apk](https://github.com/CodeWithiYouth/luci-theme-macos/actions/workflows/build-apk.yml/badge.svg)](https://github.com/CodeWithiYouth/luci-theme-macos/actions/workflows/build-apk.yml)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![OpenWrt](https://img.shields.io/badge/OpenWrt-24.10%20%7C%2025.x-00b5e2.svg)](https://openwrt.org)
+
 一款为 OpenWrt / LuCI 设计的 **macOS 风格主题**。它彻底放弃了传统路由器后台“顶部导航 + 表单堆叠”的布局，改用：
 
 - **桌面（Desktop）作为首页**：实时显示系统、网络、无线、客户端等信息小组件；
@@ -136,19 +140,48 @@ make -j$(nproc)
 如果你维护的是完整的 LuCI feed，也可以把它放到 `feeds/luci/themes/luci-theme-macos`，
 这样 `include ../../luci.mk` 会直接生效。
 
-### 方式二：使用 SDK 单独编译 ipk
+### 方式二：直接安装预编译包（推荐）
+
+每次推送到 `main`，GitHub Actions 都会用 **OpenWrt 25.12.6 x86/64 SDK** 自动编译并上传 apk：
+
+- 下载地址：<https://github.com/CodeWithiYouth/luci-theme-macos/releases/latest>
+- 或从 Actions 的 `luci-theme-macos-apk` artifact 中获取（含 `sha256sums.txt`）
+
+主题与 CPU 架构无关（`PKGARCH=all`），x86/64 SDK 编出的包在 arm、mips 等设备上同样可以安装。
+
+安装到设备（OpenWrt 25.12 使用 `apk` 包管理器）：
+
+```sh
+# 上传到路由器后
+apk add --allow-untrusted /tmp/luci-theme-macos-*.apk
+
+# 或者先校验收到的文件
+sha256sum luci-theme-macos-*.apk
+```
+
+> SDK 自签名的包不在设备信任列表里，所以首次安装需要 `--allow-untrusted`。
+> 安装/卸载脚本会自动注册主题，并把 `luci.main.mediaurlbase` 指向 `/luci-static/macos`。
+
+如果设备仍在使用 `opkg`（24.10 及更早），请用方式三自行编译 ipk。
+
+### 方式三：使用 SDK 单独编译
 
 ```sh
 # 在 OpenWrt SDK 中（同样需要先安装 luci feed）
 mkdir -p package/luci-theme-macos
 cp -r /path/to/luci-theme-macos/* package/luci-theme-macos/
 make package/luci-theme-macos/compile V=s
-# 生成的 ipk 位于 bin/packages/*/base/luci-theme-macos_*.ipk
+# apk 版本生成在 bin/packages/*/luci/luci-theme-macos-*.apk
+# opkg 版本生成在 bin/packages/*/base/luci-theme-macos_*.ipk
 ```
 
 安装到设备：
 
 ```sh
+# apk（25.12+）
+apk add --allow-untrusted luci-theme-macos-*.apk
+
+# opkg（24.10 及更早）
 opkg install luci-theme-macos_*.ipk
 # 或在 LuCI 中：系统 -> 软件包 -> 上传并安装
 ```
