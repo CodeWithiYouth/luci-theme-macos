@@ -3704,6 +3704,46 @@ html[data-embed="1"] .window-toolbar .tabs {
 	margin: 0;
 }
 
+html[data-embed="1"] #tabmenu {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 3px;
+	min-width: 0;
+	max-width: 100%;
+}
+
+html[data-embed="1"] #tabmenu .tabs {
+	margin: 0;
+	max-width: 100%;
+}
+
+/* application pages: a compact breadcrumb-like row above the page tabs */
+html[data-embed="1"] #tabmenu .tabs-app {
+	gap: 2px;
+	padding: 0;
+	background: transparent;
+}
+
+html[data-embed="1"] #tabmenu .tabs-app > li > a {
+	padding: 2px 7px;
+	border-radius: 6px;
+	color: var(--text-faint);
+	font-size: 11.5px;
+}
+
+html[data-embed="1"] #tabmenu .tabs-app > li > a:hover {
+	color: var(--text);
+	background: var(--hover);
+}
+
+html[data-embed="1"] #tabmenu .tabs-app > li.active > a {
+	background: transparent;
+	box-shadow: none;
+	color: var(--text);
+	font-weight: 600;
+}
+
 html[data-embed="1"] .toolbar-indicators {
 	margin-left: auto;
 }

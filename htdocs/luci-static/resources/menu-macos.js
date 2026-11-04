@@ -62,7 +62,7 @@ return baseclass.extend({
 	},
 
 	/* used by embedded pages: move the change indicators into the toolbar and
-	 * only render the page tabs */
+	 * render the application pages plus the page tabs */
 	initEmbed() {
 		const indicators = document.getElementById('indicators');
 		const slot = document.getElementById('embed-indicators');
@@ -79,7 +79,15 @@ return baseclass.extend({
 		}
 
 		ui.menu.load()
-			.then((tree) => this.renderTabs(this.modeNode(tree)))
+			.then((tree) => {
+				const mode = this.modeNode(tree);
+				const container = document.getElementById('tabmenu');
+
+				if (container)
+					this.renderAppTabs(mode, container);
+
+				this.renderTabs(mode);
+			})
 			.catch(() => {});
 	},
 
@@ -331,6 +339,35 @@ return baseclass.extend({
 			dock.appendChild(this.dockAction('reboot', util.t('Reboot', '重启'), this.urlFor('system', 'reboot')));
 
 		dock.appendChild(this.dockAction('logout', util.t('Log out', '退出登录'), this.urlFor('logout')));
+	},
+
+	/* application pages (the entries shown in the sidebar in normal mode) */
+	renderAppTabs(mode, container) {
+		const appNode = (mode.children || {})[this.app];
+		const children = util.menuChildren(appNode);
+
+		if (children.length < 2)
+			return;
+
+		const ul = E('ul', { 'class': 'tabs tabs-app' });
+
+		children.forEach((child) => {
+			const title = util.title(child);
+
+			ul.appendChild(E('li', { 'class': 'tab' + (this.sub === child.name ? ' active' : '') }, [
+				E('a', {
+					'href': L.url(this.modeName, this.app, child.name),
+					'title': title
+				}, [ title ])
+			]));
+		});
+
+		container.appendChild(ul);
+		container.style.display = '';
+
+		const toolbar = document.querySelector('#window-toolbar');
+		if (toolbar)
+			toolbar.classList.add('has-tabs');
 	},
 
 	renderTabLevel(node, parts, level, container) {

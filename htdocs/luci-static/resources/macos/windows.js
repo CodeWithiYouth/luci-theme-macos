@@ -917,6 +917,17 @@ return baseclass.extend({
 		}
 		catch (e) {}
 
+		/* remember in-page navigation (tabs, forms) so the session restores it */
+		try {
+			const cur = this.currentUrl(win);
+
+			if (cur && cur.indexOf('about:') !== 0) {
+				win.url = cur;
+				win.path = this.pathOfUrl(cur);
+			}
+		}
+		catch (e) {}
+
 		this.applyDark(win);
 
 		if (this.focused === win)
