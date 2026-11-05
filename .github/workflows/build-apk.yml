@@ -75,6 +75,18 @@ jobs:
           cd "$GITHUB_WORKSPACE/out"
           sha256sum * > sha256sums.txt
 
+      - name: Verify CSS is complete
+        working-directory: ${{ runner.temp }}/sdk
+        run: |
+          CSS=$(find build_dir -path '*luci-theme-macos*' -name cascade.css | head -1)
+          test -n "$CSS"
+          ls -l "$CSS"
+          grep -q '\.app-window' "$CSS"
+          grep -q '\.menubar' "$CSS"
+          SIZE=$(stat -c%s "$CSS")
+          echo "packaged cascade.css size: $SIZE"
+          test "$SIZE" -gt 20000
+
       - name: Inspect package
         working-directory: ${{ runner.temp }}/sdk
         run: |

@@ -35,6 +35,13 @@ ifeq ($(LUCI_MK),)
 $(error Unable to locate luci.mk, please build this package inside the LuCI feed)
 endif
 
+# csstidy/jsmin are too old for the modern CSS/JS used here: csstidy stops
+# parsing at the SVG data URIs and ships a truncated cascade.css (about 5 KB
+# instead of 78 KB), which leaves the theme without any styling. Ship the
+# sources unminified instead.
+LUCI_MINIFY_CSS:=0
+LUCI_MINIFY_JS:=0
+
 include $(LUCI_MK)
 
 # call BuildPackage - OpenWrt buildroot signature
